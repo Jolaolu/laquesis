@@ -1,0 +1,31 @@
+@charset 'utf-8';
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+//layout
+@import 'layout/reset';
+@import 'layout/variables';
+
+//mixin
+@import 'utils/mixins';
+@import 'utils/_animations';
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+body {
+  overflow: auto;
+  height: 100%;
+}
+
+button {
+  cursor: pointer;
+  :disabled {
+    cursor: not-allowed;
+  }
+}
