@@ -25,7 +25,7 @@ module.exports = {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
-  testPathIgnorePatterns: ['src/tests/'],
+  testPathIgnorePatterns: ['tests/'],
   coveragePathIgnorePatterns: ['src/main.ts'],
   collectCoverage: false,
   collectCoverageFrom: ['src/**/*.{ts,vue}'],
