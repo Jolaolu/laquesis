@@ -1,7 +1,8 @@
 export enum RouteNames {
+  Root = 'Home',
   Manage = 'Manage',
   Experiments = 'Experiments',
-  FeatureFlags = 'FeatureFlags',
+  FeatureFlags = 'Feature Flags',
   User = 'User',
   Profile = 'Profile',
   Settings = 'Settings',

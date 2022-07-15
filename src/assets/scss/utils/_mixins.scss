@@ -55,17 +55,41 @@ $breakpoint-larger: 1440px;
   }
 }
 
-@mixin button {
-  background-color: $primary-color;
-  border-radius: 0.8rem;
-  color: $white;
-  cursor: pointer;
-  outline: inherit;
-  transition: ease-in-out 0.3s all;
-  will-change: transform, opacity, background-color;
-  &:hover {
-    background-color: #db8c0a;
-    opacity: 0.88;
-    transform: translate(0, -1px);
-  }
+
+@mixin font-bold{
+  font-weight: bold;
+}
+
+@mixin font-medium {
+  font-weight: 500;
+}
+
+@mixin font-regular {
+  font-weight: 400;
+}
+@mixin subtitle-1 {
+   @include font-regular;
+  font-size: pxToRem(16);
+}
+@mixin subtitle-2 {
+  @include font-medium;
+  font-size: pxToRem(14);
+}
+@mixin body-1 {
+  @include font-regular;
+  font-size: pxToRem(16);
+}
+
+@mixin body-2 {
+  @include font-regular;
+  font-size: pxToRem(14);
+}
+@mixin caption {
+  @include font-regular;
+  font-size: pxToRem(12);
+}
+
+@mixin overline {
+  @include font-regular;
+  font-size: pxToRem(10);
 }

@@ -1,11 +1,12 @@
 @charset 'utf-8';
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 //layout
 @import 'layout/reset';
 @import 'layout/variables';
 
 //mixin
+@import 'utils/functions';
 @import 'utils/mixins';
 @import 'utils/_animations';
 
@@ -24,8 +25,38 @@ body {
 }
 
 button {
+  @include font-medium;
   cursor: pointer;
   :disabled {
     cursor: not-allowed;
   }
+}
+
+h1,h2{
+  @include font-bold;
+}
+
+h3,h4,h5,h6{
+  @include font-medium
+}
+
+h1{
+  font-size: pxToRem(60);
+}
+h2{
+  font-size: pxToRem(48);
+}
+h3{
+  font-size: pxToRem(34);
+}
+
+h4{
+  font-size: pxToRem(28);
+}
+
+h5{
+ font-size: pxToRem(24);
+}
+h6{
+  font-size: pxToRem(20);
 }

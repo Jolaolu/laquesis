@@ -8,43 +8,53 @@ Vue.use(VueRouter)
 const routes: Array<RouteConfig> = [
   {
     path: '/',
+    name: RouteNames.Root,
+    redirect: { name: RouteNames.Manage },
+  },
+  {
+    path: '/manage',
     name: RouteNames.Manage,
+    component: () => import('~/pages/ManagePage.vue'),
     redirect: { name: RouteNames.Experiments },
-  },
-  {
-    path: '/experiments',
-    name: RouteNames.Experiments,
-    component: () => import('~/pages/manage/ExperimentsPage.vue'),
-  },
-  {
-    path: '/feature-flags',
-    name: RouteNames.FeatureFlags,
-    component: () => import('~/pages/manage/FeatureFlagsPage.vue'),
+    children: [
+      {
+        path: 'experiments',
+        name: RouteNames.Experiments,
+        component: () => import('~/pages/manage/ExperimentsPage.vue'),
+      },
+      {
+        path: 'feature-flags',
+        name: RouteNames.FeatureFlags,
+        component: () => import('~/pages/manage/FeatureFlagsPage.vue'),
+      },
+    ],
   },
   {
     path: '/user',
     name: RouteNames.User,
     redirect: { name: RouteNames.Profile },
-  },
-  {
-    path: '/profile',
-    name: RouteNames.Profile,
-    component: () => import('~/pages/user/ProfilePage.vue'),
-  },
-  {
-    path: '/settings',
-    name: RouteNames.Settings,
-    component: () => import('~/pages/user/SettingsPage.vue'),
-  },
-  {
-    path: '/documentation',
-    name: RouteNames.Documentation,
-    component: () => import('~/pages/user/DocumentationPage.vue'),
-  },
-  {
-    path: '/faq',
-    name: RouteNames.Faqs,
-    component: () => import('~/pages/user/FaqsPage.vue'),
+    children: [
+      {
+        path: 'profile',
+        name: RouteNames.Profile,
+        component: () => import('~/pages/user/ProfilePage.vue'),
+      },
+      {
+        path: 'settings',
+        name: RouteNames.Settings,
+        component: () => import('~/pages/user/SettingsPage.vue'),
+      },
+      {
+        path: 'documentation',
+        name: RouteNames.Documentation,
+        component: () => import('~/pages/user/DocumentationPage.vue'),
+      },
+      {
+        path: 'faq',
+        name: RouteNames.Faqs,
+        component: () => import('~/pages/user/FaqsPage.vue'),
+      },
+    ],
   },
   {
     path: '/404',
@@ -74,6 +84,7 @@ const routes: Array<RouteConfig> = [
 
 const router = new VueRouter({
   mode: 'history',
+  linkExactActiveClass: 'active',
   base: process.env.BASE_URL,
   routes,
 })
