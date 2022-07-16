@@ -13,3 +13,7 @@ export interface IExperiment {
   deleted: boolean
   region_id: number
 }
+
+export interface IFilterList {
+  [key: string]: string[]
+}

@@ -12,30 +12,62 @@
         <base-select-box v-if="regions" :has-border="true" :select-box-items="regions" />
       </div>
       <div class="experiments-filters">
+        <p>Filter by</p>
         <div class="filters-team">
-          <base-select-box default="TEAM" :select-box-items="getArray(teamSet)" />
+          <base-select-box
+            :default="filters.Team"
+            :select-box-items="getArray(teamSet)"
+            @selected-item="setFilters($event, filters.Team)"
+          />
         </div>
         <div class="filters-status">
-          <base-select-box default="STATUS" :select-box-items="getArray(statusSet)" />
+          <base-select-box
+            :default="filters.Status"
+            :select-box-items="getArray(statusSet)"
+            @selected-item="setFilters($event, filters.Status)"
+          />
         </div>
         <div class="filters-platform">
-          <base-select-box default="PLATFORM" :select-box-items="getArray(platformSet)" />
+          <base-select-box
+            :default="filters.Platform"
+            @selected-item="setFilters($event, filters.Platform)"
+            :select-box-items="getArray(platformSet)"
+          />
         </div>
       </div>
+    </div>
+    <div class="experiments-table">
+      <ul>
+        <li v-for="(filter, index) in appliedFilters" :key="index">{{ filter }}</li>
+      </ul>
+    </div>
+    <div class="experiments-pagination">
+      <base-pagination
+        :total-length="totalLengthOfData"
+        :page-from="pageFrom"
+        :page-to="pageTo"
+        @per-page="perPage = convertToNumber($event)"
+      />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
+import Vue, { defineComponent, onMounted, ref, watch, computed } from 'vue'
+import { experimentRegions, experimentData } from '~/services/index'
+import { IRegion, IExperiment, IFilterList } from '~/services/interfaces'
+import { paginate, getArray, convertToNumber, combineArrays } from '~/helpers/index'
+import BasePagination from '~/components/ui/BasePagination.vue'
 import BaseButton from '~/components/form-elements/BaseButton.vue'
 import PlusIcon from '~/components/icons/PlusIcon.vue'
 import BaseSelectBox from '~/components/form-elements/BaseSelectBox.vue'
-import { experimentRegions, experimentData } from '~/services/index'
-import { IRegion, IExperiment } from '~/services/interfaces'
-import { paginate, getArray } from '~/helpers/index'
 
+export enum dataFilters {
+  Team = 'TEAM',
+  Platform = 'PLATFORM',
+  Status = 'STATUS',
+}
 export default defineComponent({
-  components: { BaseButton, PlusIcon, BaseSelectBox },
+  components: { BaseButton, PlusIcon, BaseSelectBox, BasePagination },
   setup() {
     const regions = ref<IRegion[] | null>(null)
     const experimentsList = ref<IExperiment[]>([])
@@ -45,6 +77,9 @@ export default defineComponent({
     const platformSet = ref<Set<string>>(new Set())
     const teamSet = ref<Set<string>>(new Set())
     const statusSet = ref<Set<string>>(new Set())
+    const pageFrom = ref<number>(1)
+    const pageTo = ref<number>(perPage.value)
+    const filtersList = ref<IFilterList>({})
 
     const getHeaders = (): void => {
       tableHeaders.value = Object.keys(experimentData[0])
@@ -53,6 +88,8 @@ export default defineComponent({
     const fetchData = (perPage: number, pageNumber: number): void => {
       experimentsList.value = paginate(perPage, pageNumber, [...experimentData])
       getFilters(experimentData)
+      pageFrom.value = pageNumber * perPage - (perPage - 1)
+      pageTo.value = Math.min(pageFrom.value + perPage - 1, totalLengthOfData.value)
     }
 
     const getFilters = (experimentData: IExperiment[]): void => {
@@ -62,6 +99,21 @@ export default defineComponent({
         statusSet.value.add(i.platform)
       })
     }
+
+    const setFilters = ($event: string, type: dataFilters): void => {
+      if (type in filtersList.value) {
+        if (filtersList.value[type].includes($event)) {
+          return
+        }
+        filtersList.value[type].push($event)
+      } else {
+        Vue.set(filtersList.value, type, [])
+        filtersList.value[type].push($event)
+      }
+    }
+
+    const totalLengthOfData = computed(() => experimentData.length)
+    const appliedFilters = computed(() => combineArrays(Object.values(filtersList.value)))
 
     watch(pageNumber, (newVal) => {
       fetchData(perPage.value, newVal)
@@ -77,12 +129,23 @@ export default defineComponent({
       getHeaders()
     })
     return {
+      appliedFilters,
+      combineArrays,
+      convertToNumber,
+      filters: dataFilters,
+      filtersList,
       getArray,
+      pageFrom,
+      pageNumber,
+      pageTo,
+      perPage,
       platformSet,
       regions,
+      setFilters,
       statusSet,
       tableHeaders,
       teamSet,
+      totalLengthOfData,
     }
   },
 })
@@ -126,9 +189,21 @@ export default defineComponent({
   }
   &-filters {
     display: flex;
+    align-items: center;
+    p {
+      margin-right: 2rem;
+      color: $gray-light;
+    }
     & .selectbox-text {
       color: $gray-black;
     }
+    & .selectbox-menu > li > button {
+      text-transform: capitalize;
+    }
+  }
+  &-pagination {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>
