@@ -5,8 +5,8 @@
       <caret-icon :class="{ clicked: isSelectClicked }" />
     </button>
     <div v-if="isSelectClicked" class="selectbox-menu">
-      <ul v-for="(item, index) in selectBoxItems" :key="index">
-        <li>
+      <ul>
+        <li v-for="(item, index) in selectBoxItems" :key="index">
           <button type="button" @click="setSelectClick(item)">
             {{ typeof item === 'string' ? item : item.name }}
           </button>
@@ -21,6 +21,7 @@ import CaretIcon from '~/components/icons/CaretIcon.vue'
 import { IRegion } from '~/services/interfaces'
 export default defineComponent({
   components: { CaretIcon },
+  emits: ['selected-item'],
   props: {
     selectBoxItems: {
       type: Array as PropType<Array<string | IRegion>>,
@@ -101,11 +102,15 @@ export default defineComponent({
     width: 20rem;
     height: 13rem;
     background: $white;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.306764);
+    box-shadow: 2px 2px 19px rgba(0, 0, 0, 0.13);
     li {
-      padding: 0.5rem 0.5rem;
       &:hover {
         background: $gray-lightest;
+      }
+      button {
+        width: 100%;
+        padding: 0.5rem 0.5rem;
+        text-align: left;
       }
     }
   }

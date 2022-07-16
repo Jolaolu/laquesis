@@ -1,3 +1,3 @@
 <template>
-  <div></div>
+  <div>Feature Flags Page</div>
 </template>

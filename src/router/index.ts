@@ -13,7 +13,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/manage',
     name: RouteNames.Manage,
-    component: () => import('~/pages/ManagePage.vue'),
+    component: () => import('~/pages/HomeView.vue'),
     redirect: { name: RouteNames.Experiments },
     children: [
       {
@@ -31,6 +31,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/user',
     name: RouteNames.User,
+    component: () => import('~/pages/HomeView.vue'),
     redirect: { name: RouteNames.Profile },
     children: [
       {
