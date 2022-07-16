@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig, NavigationGuardNext, Route } from 'vue-router'
-import HomeView from '~/pages/HomeView.vue'
 import { RouteNames } from './route-name'
 
 Vue.use(VueRouter)
