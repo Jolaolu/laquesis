@@ -2,8 +2,7 @@ export interface IRegion {
   id: number
   name: string
 }
-
-export interface IExperiments {
+export interface IExperiment {
   id: string
   jira_id: string
   title: string
@@ -11,6 +10,6 @@ export interface IExperiments {
   platform: string
   status: string
   date_started: string
-  delete: boolean
+  deleted: boolean
   region_id: number
 }
