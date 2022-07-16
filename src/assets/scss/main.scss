@@ -26,37 +26,43 @@ body {
 
 button {
   @include font-medium;
+  border: none;
+  background-color: transparent;
   cursor: pointer;
   :disabled {
     cursor: not-allowed;
   }
 }
 
-h1,h2{
+h1,
+h2 {
   @include font-bold;
 }
 
-h3,h4,h5,h6{
-  @include font-medium
+h3,
+h4,
+h5,
+h6 {
+  @include font-medium;
 }
 
-h1{
+h1 {
   font-size: pxToRem(60);
 }
-h2{
+h2 {
   font-size: pxToRem(48);
 }
-h3{
+h3 {
   font-size: pxToRem(34);
 }
 
-h4{
+h4 {
   font-size: pxToRem(28);
 }
 
-h5{
- font-size: pxToRem(24);
+h5 {
+  font-size: pxToRem(24);
 }
-h6{
+h6 {
   font-size: pxToRem(20);
 }
