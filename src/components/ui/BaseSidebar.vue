@@ -1,6 +1,9 @@
 <template>
   <aside class="sidebar">
     <header class="sidebar-brand">
+      <base-button class="close" @click="$emit('sidebar-close')">
+        <close-icon />
+      </base-button>
       <img :src="require('@/assets/logo.png')" alt="Laquesis" />
     </header>
     <nav class="sidebar-navigation">
@@ -51,7 +54,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { RouteNames } from '~/router/route-name'
+import BaseButton from '~/components/form-elements/BaseButton.vue'
+import { CloseIcon } from '~/components/icons/index'
 export default defineComponent({
+  components: { BaseButton, CloseIcon },
   setup() {
     return {
       RouteNames,
@@ -117,9 +123,13 @@ export default defineComponent({
     }
   }
 }
-
-.router-link-active > div,
-.router-link-active span {
-  /* background-color: ; */
+.close {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 2rem;
+  margin-bottom: 3rem;
+  @include screen(menner) {
+    display: none;
+  }
 }
 </style>

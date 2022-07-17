@@ -7,7 +7,7 @@
         class="home-sidebar"
       />
       <main class="home-content" :class="{ '-OpenSidebar': isSidebarOpen }">
-        <base-nav-bar />
+        <base-nav-bar @sidebar-open="isSidebarOpen = true" />
         <router-view />
       </main>
     </div>
@@ -41,6 +41,21 @@ export default defineComponent({
     height: inherit;
     min-height: 100vh;
     border-right: 1px solid $gray-lighter;
+    @include screen(mid) {
+      display: none;
+      width: 35%;
+      background: $white;
+    }
+    @include screen(custom, max, 576) {
+      display: none;
+      width: 50%;
+      background: $white;
+    }
+    &__open {
+      position: fixed;
+      z-index: 999;
+      display: block !important;
+    }
   }
   &-content {
     width: 100%;

@@ -5,7 +5,7 @@
       <span v-else> {{ selected }}</span>
       <caret-icon :class="{ clicked: isSelectClicked }" />
     </base-button>
-    <div v-if="isSelectClicked" class="selectbox-menu">
+    <div v-if="isSelectClicked" class="selectbox-menu" v-on-clickaway="showSelectBox">
       <ul>
         <li v-for="(item, index) in selectBoxItems" :key="index">
           <base-button @click="setSelectClick(item)">
@@ -18,10 +18,14 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, onMounted, PropType } from 'vue'
+import { directive as onClickaway } from 'vue-clickaway'
 import CaretIcon from '~/components/icons/CaretIcon.vue'
 import BaseButton from '~/components/form-elements/BaseButton.vue'
 import { IRegion } from '~/services/interfaces'
 export default defineComponent({
+  directives: {
+    onClickaway: onClickaway,
+  },
   components: { CaretIcon, BaseButton },
   emits: ['selected-item'],
   props: {
@@ -94,7 +98,7 @@ export default defineComponent({
     @include subtitle-1;
     text-transform: capitalize;
     span {
-      margin-right: 3rem;
+      margin-right: 1.5rem;
     }
     &.-has-border {
       border: 1px solid $purple-rain;
