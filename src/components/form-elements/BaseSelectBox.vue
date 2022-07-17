@@ -1,15 +1,16 @@
 <template>
   <div class="selectbox">
-    <button type="button" class="selectbox-text" :class="{ '-has-border': hasBorder }" @click="showSelectBox">
-      <span> {{ selected }}</span>
+    <base-button class="selectbox-text" :class="{ '-has-border': hasBorder }" @click="showSelectBox">
+      <span v-if="isFilter">{{ defaultItem }} </span>
+      <span v-else> {{ selected }}</span>
       <caret-icon :class="{ clicked: isSelectClicked }" />
-    </button>
+    </base-button>
     <div v-if="isSelectClicked" class="selectbox-menu">
       <ul>
         <li v-for="(item, index) in selectBoxItems" :key="index">
-          <button type="button" @click="setSelectClick(item)">
+          <base-button @click="setSelectClick(item)">
             {{ typeof item === 'string' ? item : item.name }}
-          </button>
+          </base-button>
         </li>
       </ul>
     </div>
@@ -18,9 +19,10 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, PropType } from 'vue'
 import CaretIcon from '~/components/icons/CaretIcon.vue'
+import BaseButton from '~/components/form-elements/BaseButton.vue'
 import { IRegion } from '~/services/interfaces'
 export default defineComponent({
-  components: { CaretIcon },
+  components: { CaretIcon, BaseButton },
   emits: ['selected-item'],
   props: {
     selectBoxItems: {
@@ -32,8 +34,12 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    default: {
+    defaultItem: {
       type: String,
+      required: false,
+    },
+    isFilter: {
+      type: Boolean,
       required: false,
     },
   },
@@ -56,8 +62,8 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (props.default) {
-        selected.value = props.default
+      if (props.defaultItem) {
+        selected.value = props.defaultItem
       } else {
         const [firstItem] = props.selectBoxItems
         const firstItemValue = typeof firstItem === 'string' ? firstItem : firstItem.name
@@ -98,6 +104,7 @@ export default defineComponent({
   }
   &-menu {
     position: absolute;
+    z-index: 2;
     overflow: scroll;
     width: 20rem;
     height: 13rem;

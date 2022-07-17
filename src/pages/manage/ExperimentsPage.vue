@@ -15,21 +15,24 @@
         <p>Filter by</p>
         <div class="filters-team">
           <base-select-box
-            :default="filters.Team"
+            is-filter
+            :default-item="filters.Team"
             :select-box-items="getArray(teamSet)"
             @selected-item="setFilters($event, filters.Team)"
           />
         </div>
         <div class="filters-status">
           <base-select-box
-            :default="filters.Status"
+            is-filter
+            :default-item="filters.Status"
             :select-box-items="getArray(statusSet)"
             @selected-item="setFilters($event, filters.Status)"
           />
         </div>
         <div class="filters-platform">
           <base-select-box
-            :default="filters.Platform"
+            is-filter
+            :default-item="filters.Platform"
             @selected-item="setFilters($event, filters.Platform)"
             :select-box-items="getArray(platformSet)"
           />
@@ -37,8 +40,15 @@
       </div>
     </div>
     <div class="experiments-table">
-      <ul>
-        <li v-for="(filter, index) in appliedFilters" :key="index">{{ filter }}</li>
+      <ul class="filters">
+        <li v-for="(filter, index) in appliedFilters" :key="index">
+          <base-button class="applied">
+            <span>
+              {{ filter }}
+            </span>
+            <cancel-icon @click.native="removeFilter(filter)" />
+          </base-button>
+        </li>
       </ul>
     </div>
     <div class="experiments-pagination">
@@ -60,6 +70,7 @@ import BasePagination from '~/components/ui/BasePagination.vue'
 import BaseButton from '~/components/form-elements/BaseButton.vue'
 import PlusIcon from '~/components/icons/PlusIcon.vue'
 import BaseSelectBox from '~/components/form-elements/BaseSelectBox.vue'
+import CancelIcon from '~/components/icons/CancelIcon.vue'
 
 export enum dataFilters {
   Team = 'TEAM',
@@ -67,13 +78,13 @@ export enum dataFilters {
   Status = 'STATUS',
 }
 export default defineComponent({
-  components: { BaseButton, PlusIcon, BaseSelectBox, BasePagination },
+  components: { BaseButton, PlusIcon, BaseSelectBox, BasePagination, CancelIcon },
   setup() {
     const regions = ref<IRegion[] | null>(null)
     const experimentsList = ref<IExperiment[]>([])
     const tableHeaders = ref<string[]>([])
     const pageNumber = ref<number>(1)
-    const perPage = ref<number>(20)
+    const perPage = ref<number>(10)
     const platformSet = ref<Set<string>>(new Set())
     const teamSet = ref<Set<string>>(new Set())
     const statusSet = ref<Set<string>>(new Set())
@@ -82,7 +93,10 @@ export default defineComponent({
     const filtersList = ref<IFilterList>({})
 
     const getHeaders = (): void => {
-      tableHeaders.value = Object.keys(experimentData[0])
+      tableHeaders.value = Object.keys(experimentData[0]).map((header) => {
+        return header.split('_').join(' ')
+      })
+      console.log(tableHeaders.value)
     }
 
     const fetchData = (perPage: number, pageNumber: number): void => {
@@ -110,6 +124,18 @@ export default defineComponent({
         Vue.set(filtersList.value, type, [])
         filtersList.value[type].push($event)
       }
+    }
+
+    const removeFilter = (filter: string): void => {
+      const filterValues = Object.values(filtersList.value)
+      Object.keys(filtersList.value).forEach((_, index) => {
+        if (filterValues[index].includes(filter)) {
+          const position = filterValues[index].indexOf(filter)
+          if (position > -1) {
+            filterValues[index].splice(position, 1)
+          }
+        }
+      })
     }
 
     const totalLengthOfData = computed(() => experimentData.length)
@@ -141,6 +167,7 @@ export default defineComponent({
       perPage,
       platformSet,
       regions,
+      removeFilter,
       setFilters,
       statusSet,
       tableHeaders,
@@ -204,6 +231,27 @@ export default defineComponent({
   &-pagination {
     display: flex;
     justify-content: flex-end;
+  }
+  &-table {
+    .filters {
+      display: flex;
+    }
+    .applied {
+      display: flex;
+      width: 12rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      background-color: $gray-lighter;
+      border-radius: 1.8rem;
+      color: $gray-darkest;
+      text-overflow: ellipsis;
+      text-transform: capitalize;
+      span {
+        margin-right: 1rem;
+      }
+    }
   }
 }
 </style>
