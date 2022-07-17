@@ -12,6 +12,7 @@ export interface IExperiment {
   date_started: string
   deleted: boolean
   region_id: number
+  action?: string
 }
 
 export interface IFilterList {
