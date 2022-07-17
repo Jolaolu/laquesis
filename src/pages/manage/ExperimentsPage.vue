@@ -223,8 +223,11 @@ export default defineComponent({
 <style lang="scss">
 .experiments {
   width: 100%;
-  padding: 5rem 5.8rem 7rem 4.45rem;
-  @include screen(mid) {
+  padding: 5rem 2rem 7rem 2rem;
+  @include screen(midder) {
+    padding: 5rem 3rem 7rem 3rem;
+  }
+  @include screen(larger) {
     padding: 5rem 2rem 7rem 2rem;
   }
   &-new {
@@ -258,13 +261,22 @@ export default defineComponent({
     display: flex;
     justify-content: space-between;
     padding-top: 2.7rem;
+    @include screen(med) {
+      flex-direction: column;
+    }
   }
   &-filters {
     display: flex;
     align-items: center;
+    @include screen(med) {
+      margin-top: 2rem;
+    }
     p {
       margin-right: 2rem;
       color: $gray-light;
+      @include screen(med) {
+        margin-right: 0.5rem;
+      }
     }
     & .selectbox-text {
       color: $gray-black;

@@ -74,6 +74,12 @@ export default defineComponent({
     & .selectbox-text {
       color: $gray-black;
     }
+    .selectbox {
+      position: relative;
+    }
+    & .selectbox-menu {
+      top: 0;
+    }
   }
   &-data {
     display: flex;

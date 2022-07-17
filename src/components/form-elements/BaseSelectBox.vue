@@ -99,6 +99,10 @@ export default defineComponent({
     text-transform: capitalize;
     span {
       margin-right: 1.5rem;
+      @include screen(mid) {
+        margin-right: 1rem;
+        @include subtitle-2;
+      }
     }
     &.-has-border {
       border: 1px solid $purple-rain;

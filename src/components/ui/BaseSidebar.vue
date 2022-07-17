@@ -125,6 +125,7 @@ export default defineComponent({
 }
 .close {
   display: flex;
+  width: 100%;
   justify-content: flex-end;
   padding-right: 2rem;
   margin-bottom: 3rem;

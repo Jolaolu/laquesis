@@ -6,7 +6,9 @@
     />
   </svg>
 </template>
-<style lang="scss">
-.search-icon {
-}
-</style>
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  name: 'SearchIcon',
+})
+</script>

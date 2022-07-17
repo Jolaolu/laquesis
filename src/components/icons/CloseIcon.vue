@@ -4,3 +4,9 @@
     <path fill="currentColor" d="M.954 14.343L14.844.454l1.11 1.11-13.889 13.89z" />
   </svg>
 </template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  name: 'CloseIcon',
+})
+</script>
