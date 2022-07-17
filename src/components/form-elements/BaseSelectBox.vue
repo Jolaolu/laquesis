@@ -68,6 +68,7 @@ export default defineComponent({
         const [firstItem] = props.selectBoxItems
         const firstItemValue = typeof firstItem === 'string' ? firstItem : firstItem.name
         selected.value = firstItemValue
+        emit('selected-item', firstItem)
       }
     })
     return {

@@ -9,7 +9,13 @@
     </div>
     <div class="experiments-menu">
       <div class="select">
-        <base-select-box v-if="regions" :has-border="true" :select-box-items="regions" />
+        <base-select-box
+          v-if="regions"
+          default-item="Select Region"
+          :has-border="true"
+          :select-box-items="regions"
+          @selected-item="setSelectedRegion"
+        />
       </div>
       <div class="experiments-filters">
         <p>Filter by</p>
@@ -50,6 +56,7 @@
           </base-button>
         </li>
       </ul>
+      <experiments-table :table-headers="tableHeaders" />
     </div>
     <div class="experiments-pagination">
       <base-pagination
@@ -71,6 +78,7 @@ import BaseButton from '~/components/form-elements/BaseButton.vue'
 import PlusIcon from '~/components/icons/PlusIcon.vue'
 import BaseSelectBox from '~/components/form-elements/BaseSelectBox.vue'
 import CancelIcon from '~/components/icons/CancelIcon.vue'
+import ExperimentsTable from '~/components/ui/ExperimentsTable.vue'
 
 export enum dataFilters {
   Team = 'TEAM',
@@ -78,32 +86,39 @@ export enum dataFilters {
   Status = 'STATUS',
 }
 export default defineComponent({
-  components: { BaseButton, PlusIcon, BaseSelectBox, BasePagination, CancelIcon },
+  components: {
+    BaseButton,
+    PlusIcon,
+    BaseSelectBox,
+    BasePagination,
+    CancelIcon,
+    ExperimentsTable,
+  },
   setup() {
     const regions = ref<IRegion[] | null>(null)
-    const experimentsList = ref<IExperiment[]>([])
     const tableHeaders = ref<string[]>([])
     const pageNumber = ref<number>(1)
     const perPage = ref<number>(10)
     const platformSet = ref<Set<string>>(new Set())
     const teamSet = ref<Set<string>>(new Set())
     const statusSet = ref<Set<string>>(new Set())
-    const pageFrom = ref<number>(1)
-    const pageTo = ref<number>(perPage.value)
     const filtersList = ref<IFilterList>({})
+    const selectedRegion = ref<IRegion | null>(null)
+    const filteredData = ref<IExperiment[]>([])
 
     const getHeaders = (): void => {
-      tableHeaders.value = Object.keys(experimentData[0]).map((header) => {
-        return header.split('_').join(' ')
-      })
-      console.log(tableHeaders.value)
+      const toBeRemoved = ['id', 'deleted', 'region_id']
+      Object.keys(experimentData[0]).reduce((acc, header: string) => {
+        if (!toBeRemoved.includes(header)) {
+          tableHeaders.value.push(header.split('_').join(' '))
+        }
+        return acc
+      }, [])
     }
 
-    const fetchData = (perPage: number, pageNumber: number): void => {
-      experimentsList.value = paginate(perPage, pageNumber, [...experimentData])
-      getFilters(experimentData)
-      pageFrom.value = pageNumber * perPage - (perPage - 1)
-      pageTo.value = Math.min(pageFrom.value + perPage - 1, totalLengthOfData.value)
+    const setSelectedRegion = (region: IRegion): void => {
+      selectedRegion.value = region
+      console.log(region)
     }
 
     const getFilters = (experimentData: IExperiment[]): void => {
@@ -138,20 +153,24 @@ export default defineComponent({
       })
     }
 
-    const totalLengthOfData = computed(() => experimentData.length)
+    const totalLengthOfData = computed(() => filteredData.value.length)
     const appliedFilters = computed(() => combineArrays(Object.values(filtersList.value)))
+    const pageTo = computed(() => Math.min(pageFrom.value + perPage.value - 1, totalLengthOfData.value))
+    const pageFrom = computed(() => pageNumber.value * perPage.value - (perPage.value - 1) || 1)
+    const experimentsList = computed(() => paginate(perPage.value, pageNumber.value, [...filteredData.value]))
 
-    watch(pageNumber, (newVal) => {
-      fetchData(perPage.value, newVal)
-    })
-
-    watch(perPage, (newVal) => {
-      fetchData(newVal, pageNumber.value)
-    })
+    watch(
+      selectedRegion,
+      (newVal) => {
+        filteredData.value = experimentData.filter((experiment) => experiment.region_id === newVal?.id)
+        getFilters(experimentsList.value)
+      },
+      { immediate: true }
+    )
 
     onMounted(() => {
+      filteredData.value = experimentData
       regions.value = experimentRegions
-      fetchData(perPage.value, pageNumber.value)
       getHeaders()
     })
     return {
@@ -168,8 +187,10 @@ export default defineComponent({
       platformSet,
       regions,
       removeFilter,
-      setFilters,
+      selectedRegion,
       statusSet,
+      setFilters,
+      setSelectedRegion,
       tableHeaders,
       teamSet,
       totalLengthOfData,
@@ -235,13 +256,15 @@ export default defineComponent({
   &-table {
     .filters {
       display: flex;
+      padding: 2rem 0;
     }
     .applied {
       display: flex;
-      width: 12rem;
+      width: 10rem;
+      @include caption;
       align-items: center;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.8rem;
       margin-right: 1rem;
       background-color: $gray-lighter;
       border-radius: 1.8rem;
