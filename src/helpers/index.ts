@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 /**
  * Manual pagination
  *
@@ -25,6 +26,10 @@ export const getArray = (item: Set<string>): string[] => Array.from(item)
  */
 export const convertToNumber = (word: string): number => parseInt(word)
 
+/**
+ * @param {Array}  items   an array of chunks of arrays
+ * @returns {Array}   a single array of the combined chunks
+ */
 export const combineArrays = (items: string[][]): string[] => {
   const newArray: string[] = []
   items.reduce((arr, item: string[]) => {
@@ -33,3 +38,5 @@ export const combineArrays = (items: string[][]): string[] => {
   }, newArray)
   return newArray
 }
+
+export const getFormattedDate = (date: string): string => dayjs(date).format('DD/MM/YYYY')

@@ -56,14 +56,16 @@
           </base-button>
         </li>
       </ul>
-      <experiments-table :table-headers="tableHeaders" />
+      <experiments-table :table-headers="tableHeaders" :table-data="experimentsList" />
     </div>
     <div class="experiments-pagination">
       <base-pagination
         :total-length="totalLengthOfData"
         :page-from="pageFrom"
         :page-to="pageTo"
+        :current-page="pageNumber"
         @per-page="perPage = convertToNumber($event)"
+        @change-page="changePage"
       />
     </div>
   </div>
@@ -123,9 +125,9 @@ export default defineComponent({
 
     const getFilters = (experimentData: IExperiment[]): void => {
       experimentData.forEach((i) => {
-        platformSet.value.add(i.team)
-        teamSet.value.add(i.status)
-        statusSet.value.add(i.platform)
+        platformSet.value.add(i.platform)
+        teamSet.value.add(i.team)
+        statusSet.value.add(i.status)
       })
     }
 
@@ -153,11 +155,27 @@ export default defineComponent({
       })
     }
 
+    const changePage = (action: string): void => {
+      switch (action) {
+        case 'next':
+          pageNumber.value++
+          break
+        case 'previous':
+          pageNumber.value--
+          break
+        default:
+          pageNumber.value = 1
+          break
+      }
+    }
+
     const totalLengthOfData = computed(() => filteredData.value.length)
     const appliedFilters = computed(() => combineArrays(Object.values(filtersList.value)))
     const pageTo = computed(() => Math.min(pageFrom.value + perPage.value - 1, totalLengthOfData.value))
     const pageFrom = computed(() => pageNumber.value * perPage.value - (perPage.value - 1) || 1)
-    const experimentsList = computed(() => paginate(perPage.value, pageNumber.value, [...filteredData.value]))
+    const experimentsList = computed((): IExperiment[] =>
+      paginate(perPage.value, pageNumber.value, [...filteredData.value])
+    )
 
     watch(
       selectedRegion,
@@ -172,11 +190,14 @@ export default defineComponent({
       filteredData.value = experimentData
       regions.value = experimentRegions
       getHeaders()
+      getFilters(experimentsList.value)
     })
     return {
       appliedFilters,
+      changePage,
       combineArrays,
       convertToNumber,
+      experimentsList,
       filters: dataFilters,
       filtersList,
       getArray,
@@ -202,7 +223,10 @@ export default defineComponent({
 <style lang="scss">
 .experiments {
   width: 100%;
-  padding: 5rem 5.8rem 0 4.45rem;
+  padding: 5rem 5.8rem 7rem 4.45rem;
+  @include screen(mid) {
+    padding: 5rem 2rem 7rem 2rem;
+  }
   &-new {
     display: flex;
     width: 14.5rem;
@@ -252,6 +276,7 @@ export default defineComponent({
   &-pagination {
     display: flex;
     justify-content: flex-end;
+    padding-top: 2rem;
   }
   &-table {
     .filters {
